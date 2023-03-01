@@ -9,7 +9,6 @@ import itertools
 import pandas as pd
 import numpy as np
 
-
 def main():
 
     parser = argparse.ArgumentParser(
@@ -44,15 +43,34 @@ def main():
                         help='Exclude header when writing out the mean values.',
                         required=False)
 
+    parser.add_argument('--derep_dups', action='store_true',
+                        help='Flag to indicate that dereplicated seqs should be expanded. Assumes dupliate number indicated by trailing "_N" in ids.',
+                        required=False, default = None)
+
     args = parser.parse_args()
 
     # Read in input sequences.
     seqs = read_fasta(args.input, convert_upper=True)
 
+    if args.derep_dups:
+
+        new_seqs = dict()
+
+        for seq_id in seqs.keys():
+            seq_id_split = seq_id.split('_')
+            num_dups = int(seq_id_split[-1])
+            if num_dups > 1:
+                for dup_i in range(1, num_dups, 1):
+                    new_id_split = seq_id_split
+                    new_id_split[-1] = str(dup_i)
+                    new_seqs['_'.join(new_id_split)] = seqs[seq_id]
+
+        seqs.update(new_seqs)
+
     if len(seqs.keys()) == 0:
-        sys.exit("Stopping: no sequences were found in the input file.")
+        sys.exit("Stopping: no sequences were found in the input file: " + args.input)
     elif len(seqs.keys()) == 1:
-        sys.exit("Stopping: there is only one input sequence present.")
+        sys.exit("Stopping: there is only one input sequence present: " + args.input)
 
     # Get mean dn, ds, and dn/ds based on all pairwise comparisons.
     pairwise_combos = list(itertools.combinations(seqs, 2))

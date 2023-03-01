@@ -41,32 +41,28 @@ def obs_N_S_subs(seq1, seq2):
 
     Nd = 0
     Sd = 0
+    bases = ['A', 'C', 'G', 'T']
 
     for i in range(0, len(seq1) - 2, 3):
         
         codon1 = seq1[i:i + 3]
         codon2 = seq2[i:i + 3]
 
-        if '-' in codon1 or '-' in codon2:
-            continue
-
         if codon1 != codon2:
+
+            # Skip codons if any non-standard bases.
+            non_standard_base = False
+            for codon_i in range(3):
+                if codon1[codon_i] not in bases or codon2[codon_i] not in bases:
+                    non_standard_base = True
+                    break
+            if non_standard_base:
+                continue
 
             codon1_aa = codon_to_aa[codon1]
             codon2_aa = codon_to_aa[codon2]
 
             if codon1_aa == 'STOP' or codon2_aa == 'STOP':
-                continue
-
-            non_standard_base = False
-            bases = ['A', 'C', 'G', 'T']
-            for codon_i in range(3):
-                if codon1[codon_i] not in bases or codon2[codon_i] not in bases:
-                    non_standard_base = True
-                    break
-
-            # Skip codons if any non-standard bases.
-            if non_standard_base:
                 continue
 
             # Note that there can be multiple subs in same codon.
@@ -158,16 +154,12 @@ def exp_N_S_sites(in_seq):
 
         codon = in_seq[i:i + 3]
 
-        if '-' in codon:
-            continue
-
+        # Skip codon if any non-standard bases.
         non_standard_base = False
         for codon_i in range(3):
             if codon[codon_i] not in bases:
                 non_standard_base = True
                 break
-
-        # Skip codon if any non-standard bases.
         if non_standard_base:
             continue
 
