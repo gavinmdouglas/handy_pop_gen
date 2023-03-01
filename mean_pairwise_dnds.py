@@ -47,6 +47,10 @@ def main():
                         help='Flag to indicate that dereplicated seqs should be expanded. Assumes dupliate number indicated by trailing "_N" in ids.',
                         required=False, default = None)
 
+    parser.add_argument('--suffix_to_rm', metavar='SUFFIX', type=str,
+                        help='Suffix in filename to remove in output',
+                        required=False, default = None)
+
     args = parser.parse_args()
 
     # Read in input sequences.
@@ -100,6 +104,12 @@ def main():
         print('\t'.join(['infile', 'mean_n_subs', 'mean_n_sites',
                          'mean_s_subs', 'mean_s_sites',
                          'mean_dn', 'mean_ds', 'mean_dnds']))
+
+    filename_out = os.path.basename(args.input)
+
+    if args.suffix_to_rm:
+        if filename_out.endswith(args.suffix_to_rm):
+            url = url[:-len(args.suffix_to_rm)]
 
     mean_output = [os.path.basename(args.input), mean_n_subs, mean_n_sites,
                    mean_s_subs, mean_s_sites,
