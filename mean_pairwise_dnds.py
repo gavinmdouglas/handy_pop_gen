@@ -111,7 +111,7 @@ def main():
         if filename_out.endswith(args.suffix_to_rm):
             filename_out = filename_out[:-len(args.suffix_to_rm)]
 
-    mean_output = [os.path.basename(args.input), mean_n_subs, mean_n_sites,
+    mean_output = [filename_out, mean_n_subs, mean_n_sites,
                    mean_s_subs, mean_s_sites,
                    mean_dn, mean_ds, mean_dnds]
     mean_output = [str(val) for val in mean_output]
