@@ -109,7 +109,7 @@ def main():
 
     if args.suffix_to_rm:
         if filename_out.endswith(args.suffix_to_rm):
-            url = url[:-len(args.suffix_to_rm)]
+            filename_out = filename_out[:-len(args.suffix_to_rm)]
 
     mean_output = [os.path.basename(args.input), mean_n_subs, mean_n_sites,
                    mean_s_subs, mean_s_sites,
