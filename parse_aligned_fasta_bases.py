@@ -42,7 +42,7 @@ def main():
         if obs_length != len(seqs[seq_id]):
             sys.exit('Error - sequence lengths differ, but aligned sequences expected.')
 
-    print('\t'.join(['position'] + seq_ids))
+    print(','.join(['position'] + seq_ids))
 
     pos = 0
     for i in range(obs_length):
@@ -56,7 +56,7 @@ def main():
         if args.variable_only and len(set(outline)) == 1:
             continue
 
-        print('\t'.join([str(pos)] + outline))
+        print(','.join([str(pos)] + outline))
 
 
 if __name__ == '__main__':
