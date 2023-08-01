@@ -62,7 +62,7 @@ def obs_N_S_subs(seq1, seq2):
             codon1_aa = codon_to_aa[codon1]
             codon2_aa = codon_to_aa[codon2]
 
-            if codon1_aa == 'STOP' or codon2_aa == 'STOP':
+            if codon1_aa == '*' or codon2_aa == '*':
                 continue
 
             # Note that there can be multiple subs in same codon.
@@ -96,7 +96,7 @@ def obs_N_S_subs(seq1, seq2):
 
                     codon1_mutated = codon1_mutated[:codon_i] + codon2_base + codon1_mutated[codon_i + 1:]
 
-                    if codon_to_aa[codon1_mutated] == 'STOP':
+                    if codon_to_aa[codon1_mutated] == '*':
                         stop_in_path = True
                         break
 
@@ -165,7 +165,7 @@ def exp_N_S_sites(in_seq):
 
         current_aa = codon_to_aa[codon]
 
-        if current_aa == 'STOP':
+        if current_aa == '*':
             continue
 
         # Note that KaKs Calculator only looks at the first and last codon positions,
@@ -184,7 +184,7 @@ def exp_N_S_sites(in_seq):
                     if codon_to_aa[new_codon] == current_aa:
                         syn += 1
 
-                    elif codon_to_aa[new_codon] == 'STOP':
+                    elif codon_to_aa[new_codon] == '*':
                         stop += 1
 
         S += syn / 3

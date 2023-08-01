@@ -3,31 +3,31 @@
 from functions.iupac import check_ambig_match_dict
 import sys
 
-codon_to_aa = {"TTT":"F", "TTC":"F",
-                "TTA":"L", "TTG":"L",
-                "TCT":"S", "TCC":"S", "TCA":"S", "TCG":"S",
-                "TAT":"Y", "TAC":"Y",
-                "TAA":"STOP", "TAG":"STOP",
-                "TGT":"C", "TGC":"C",
-                "TGA":"STOP",
-                "TGG":"W",
-                "CTT":"L", "CTC":"L", "CTA":"L", "CTG":"L",
-                "CCT":"P", "CCC":"P", "CCA":"P", "CCG":"P",
-                "CAT":"H", "CAC":"H",
-                "CAA":"Q", "CAG":"Q",
-                "CGT":"R", "CGC":"R", "CGA":"R", "CGG":"R",
-                "ATT":"I", "ATC":"I", "ATA":"I",
-                "ATG":"M",
-                "ACT":"T", "ACC":"T", "ACA":"T", "ACG":"T",
-                "AAT":"N", "AAC":"N",
-                "AAA":"K", "AAG":"K",
-                "AGT":"S", "AGC":"S",
-                "AGA":"R", "AGG":"R",
-                "GTT":"V", "GTC":"V", "GTA":"V", "GTG":"V",
-                "GCT":"A", "GCC":"A", "GCA":"A", "GCG":"A",
-                "GAT":"D", "GAC":"D",
-                "GAA":"E", "GAG":"E",
-                "GGT":"G", "GGC":"G", "GGA":"G", "GGG":"G"}
+codon_to_aa = {'TTT':'F', 'TTC':'F',
+               'TTA':'L', 'TTG':'L',
+               'TCT':'S', 'TCC':'S', 'TCA':'S', 'TCG':'S',
+               'TAT':'Y', 'TAC':'Y',
+               'TAA':'*', 'TAG':'*',
+               'TGT':'C', 'TGC':'C',
+               'TGA':'*',
+               'TGG':'W',
+               'CTT':'L', 'CTC':'L', 'CTA':'L', 'CTG':'L',
+               'CCT':'P', 'CCC':'P', 'CCA':'P', 'CCG':'P',
+               'CAT':'H', 'CAC':'H',
+               'CAA':'Q', 'CAG':'Q',
+               'CGT':'R', 'CGC':'R', 'CGA':'R', 'CGG':'R',
+               'ATT':'I', 'ATC':'I', 'ATA':'I',
+               'ATG':'M',
+               'ACT':'T', 'ACC':'T', 'ACA':'T', 'ACG':'T',
+               'AAT':'N', 'AAC':'N',
+               'AAA':'K', 'AAG':'K',
+               'AGT':'S', 'AGC':'S',
+               'AGA':'R', 'AGG':'R',
+               'GTT':'V', 'GTC':'V', 'GTA':'V', 'GTG':'V',
+               'GCT':'A', 'GCC':'A', 'GCA':'A', 'GCG':'A',
+               'GAT':'D', 'GAC':'D',
+               'GAA':'E', 'GAG':'E',
+               'GGT':'G', 'GGC':'G', 'GGA':'G', 'GGG':'G'}
 
 
 def start_codon_present_M_only(seq):
@@ -100,7 +100,7 @@ def stop_codon_premature_present(seq, start_codon_position):
 
         codon_positions.append(i)
 
-        if check_ambig_match_dict(codon, codon_to_aa, 'STOP',
+        if check_ambig_match_dict(codon, codon_to_aa, '*',
                                   all_possible_match = True):
             stop_codon_calls.add(i)
 
@@ -113,7 +113,7 @@ def stop_codon_premature_present(seq, start_codon_position):
 
     obs_final_codon = seq[expected_stop_pos:expected_stop_pos + 3]
 
-    if len(obs_final_codon) == 3 and check_ambig_match_dict(obs_final_codon, codon_to_aa, 'STOP', all_possible_match = False):
+    if len(obs_final_codon) == 3 and check_ambig_match_dict(obs_final_codon, codon_to_aa, '*', all_possible_match = False):
 
         final_stop_present = True
         stop_codon_calls.remove(expected_stop_pos)
