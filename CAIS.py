@@ -20,11 +20,13 @@ def main():
         and differences in amino acid frequencies.
 
         Requires an input FASTA file of all protein-coding sequences (separately) for a given species.
-        The species' GC content and amino acid frequencies will be parsed from this input (along with
-        the codon frequencies per amino acid). Note that start codons will be trimmed from genes unless
+        The species' amino acid frequencies will be parsed from this input (along with the codon
+        frequencies per amino acid). Note that start codons will be trimmed from genes unless
         --assume_M_start is specified, which differs from the implementation in Weibel et al. 2023. This
         is to avoid the issue that multiple start codons are used by prokaryotes, which were the intended
-        use cases for this script.
+        use cases for this script. Note that the GC content should be specified with the --gc argument
+        in most cases (e.g., to input the genome-wide GC content), but if not specified, the GC content
+        inferred from the input genes will be used.
         ''',
 
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -41,7 +43,9 @@ def main():
     parser.add_argument('--gc', metavar='FLOAT', type=float_prop_arg,
                         required=False, default=None,
                         help='Optional GC-content (as proportion) for species. '
-                             'If not provided, will be calculated from input FASTA.')
+                             'If not provided, will be calculated from input FASTA, '
+                             'which will not be representative of the genome-wide GC content '
+                             'as used in Weibel et al. 2023.')
 
     parser.add_argument('--assume_M_start', action='store_true',
                         help='Assume that all sequences should start with methionine codon. '
@@ -216,7 +220,7 @@ def main():
     # Last, compute the CAIS score.
     CAIS = 0
     for codon in codon_to_RSCU:
-        CAIS += (codon_freq[codon] * aa_weights[codon_to_aa[codon]]) * math.log(codon_to_RSCU[codon])
+        CAIS += codon_freq[codon] * aa_weights[codon_to_aa[codon]] * math.log(codon_to_RSCU[codon])
 
     CAIS = math.exp(CAIS)
 
