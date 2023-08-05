@@ -56,21 +56,27 @@ def main():
                         help='Print warnings about genes that are not divisible by three in '
                              'length and that (optionally) do not begin with a methionine codon.')
 
+    parser.add_argument('-n', '--name', metavar='NAME', type=str,
+                        required=False, default=None,
+                        help='Optional name to output with CAIS (to make it easy to concatenate '
+                             'with other outputs). If unspecified, the input FASTA file name '
+                             'will be output.')
+
     args = parser.parse_args()
+
+    if not args.name:
+        import os
 
     seqs = read_fasta(args.fasta, cut_header=True)
 
     if len(seqs) == 0:
         sys.exit('Stopping - at least one gene sequence must be input.')
 
-    if len(seqs) < 1000:
+    if len(seqs) < 500:
         print('Read in ' + str(len(seqs)) + ' sequences. '
               'This is a relatively small number of sequences: '
               'make sure that you input a FASTA containing the '
               'protein-coding DNA sequences for this species.',
-              file=sys.stderr)
-    else:
-        print('Read in ' + str(len(seqs)) + ' sequences.',
               file=sys.stderr)
 
     # Loop through all input sequences and perform the following steps:
@@ -136,7 +142,8 @@ def main():
         print(str(num_ignored_seqs) + ' sequences were ignored due to being '
               'non-divisible by three and/or not beginning with ATG.',
               file=sys.stderr)
-    else:
+
+    elif num_ignored_seqs > 0:
         print(str(num_ignored_seqs) + ' sequences were ignored due to being '
               'non-divisible by three.', file=sys.stderr)
 
@@ -150,6 +157,13 @@ def main():
                  'Non-zero GC and AT content is required to calculate CAIS.')
 
     at_content = 1 - gc_content
+
+    # Check for any missing codons and give them a frequency of one count.
+    for codon in codon_to_aa.keys():
+        if codon_freq[codon] == 0:
+            codon_freq[codon] = 1
+            total_codons += 1
+            aa_freq[codon_to_aa[codon]] += 1
 
     # Convert aa and codon counts to proportions.
     for aa in aa_freq.keys():
@@ -187,7 +201,7 @@ def main():
     # Compute relative synonymous codon usage (RSCU) for each codon.
     # First, get the probability of observing each codon based on the GC content.
     raw_codon_prob_by_gc = dict()
-    for codon in codon_freq.keys():
+    for codon in codon_to_aa.keys():
         codon_gc_count = tally_gc_content(codon, check_IUPAC=False, type='count')
         raw_codon_prob_by_gc[codon] = (gc_content ** codon_gc_count) * (at_content ** (3 - codon_gc_count))
 
@@ -208,6 +222,7 @@ def main():
             aa_summed_obs_freq += codon_freq[codon]
 
         for codon in aa_to_codon[aa]:
+
             codon_exp_by_gc = raw_codon_prob_by_gc[codon] / aa_summed_raw_prob
             codon_obs_by_gc = codon_freq[codon] / aa_summed_obs_freq
             codon_to_RSCU[codon] = codon_obs_by_gc / codon_exp_by_gc
@@ -224,7 +239,12 @@ def main():
 
     CAIS = math.exp(CAIS)
 
-    print(CAIS)
+    if args.name:
+        name = args.name
+    else:
+        name = os.path.basename(name)
+
+    print(name + '\t' + str(CAIS))
 
 
 if __name__ == '__main__':
