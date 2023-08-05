@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import argparse
 import gzip
 import sys
 import textwrap
@@ -25,45 +26,46 @@ def read_fasta(filename, cut_header=False, convert_upper=False):
     # header name.
     name = None
 
+    def parse_fasta_lines(file_handle):
+        for line in file_handle:
+
+            line = line.rstrip()
+
+            if len(line) == 0:
+                continue
+
+            # If header-line then split by whitespace, take the first element,
+            # and define the sequence name as everything after the ">".
+            if line[0] == ">":
+
+                if cut_header:
+                    name = line.split()[0][1:]
+                else:
+                    name = line[1:]
+
+                name = name.rstrip("\r\n")
+
+                # Make sure that sequence id is not already in dictionary.
+                if name in seq:
+                    sys.stderr("Stopping due to duplicated id in file: " + name)
+
+                # Intitialize empty sequence with this id.
+                seq[name] = ""
+
+            else:
+                # Remove line terminator/newline characters.
+                line = line.rstrip("\r\n")
+
+                # Add sequence to dictionary.
+                seq[name] += line
+
     # Read in FASTA line-by-line.
     if filename[-3:] == ".gz":
-        fasta_in = gzip.open(filename, "rt")
+        with gzip.open(filename, "rt") as fasta_in:
+            parse_fasta_lines(fasta_in)
     else:
-        fasta_in = open(filename, "r")
-
-    for line in fasta_in:
-
-        line = line.rstrip()
-
-        if len(line) == 0:
-            continue
-
-        # If header-line then split by whitespace, take the first element,
-        # and define the sequence name as everything after the ">".
-        if line[0] == ">":
-
-            if cut_header:
-                name = line.split()[0][1:]
-            else:
-                name = line[1:]
-
-            name = name.rstrip("\r\n")
-
-            # Make sure that sequence id is not already in dictionary.
-            if name in seq:
-                sys.stderr("Stopping due to duplicated id in file: " + name)
-
-            # Intitialize empty sequence with this id.
-            seq[name] = ""
-
-        else:
-            # Remove line terminator/newline characters.
-            line = line.rstrip("\r\n")
-
-            # Add sequence to dictionary.
-            seq[name] += line
-
-    fasta_in.close()
+        with open(filename, "r") as fasta_in:
+            parse_fasta_lines(fasta_in)
 
     if convert_upper:
         for seq_name in seq.keys():
@@ -144,3 +146,12 @@ def read_vcf_variant_bases(in_vcf, only_poly=False):
             variant_sites[contig_name + "|" + str(position)] = observed_bases
 
     return(variant_sites)
+
+def float_prop_arg(arg):
+    try:
+        value = float(arg)
+        if 0.0 <= value <= 1.0:
+            return value
+        raise argparse.ArgumentTypeError(f"{arg} is not in the range [0.0, 1.0]")
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{arg} is not a valid float value")
