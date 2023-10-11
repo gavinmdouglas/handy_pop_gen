@@ -26,7 +26,7 @@ def main():
     parser.add_argument('--maps',
                         metavar='FOLDER',
                         type=str,
-                        help='Path to folder containing files breaking down ',
+                        help='Path to folder containing files breaking down genes to representative copies.',
                         required=False,
                         default=None)
 
