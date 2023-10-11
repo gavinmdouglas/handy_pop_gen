@@ -22,7 +22,9 @@ NUCL_INTERMEDIATE=$FASTA_FILE"_nuc.fas"
 PROTEIN_MSA=$FASTA_FILE"_protein.msa"
 FINAL_MSA="$BASENAME.msa.fna"
 
-muscle -in $PROTEIN_INTERMEDIATE -out $PROTEIN_MSA  2> muscle_log.txt
+# Note that the muscle command to use depends on the version.
+# muscle -in $PROTEIN_INTERMEDIATE -out $PROTEIN_MSA  2> muscle_log.txt
+muscle --align $PROTEIN_INTERMEDIATE --output $PROTEIN_MSA  2> muscle_log.txt
 
 hyphy $HYPHY_DIR/codon-msa/post-msa.bf --protein-msa $PROTEIN_MSA --nucleotide-sequences $NUCL_INTERMEDIATE --output $FINAL_MSA &> post-msa_log.txt
 
