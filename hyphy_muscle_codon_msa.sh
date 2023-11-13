@@ -26,7 +26,11 @@ FINAL_MSA="$BASENAME.msa.fna"
 # muscle -in $PROTEIN_INTERMEDIATE -out $PROTEIN_MSA  2> muscle_log.txt
 muscle --align $PROTEIN_INTERMEDIATE --output $PROTEIN_MSA  2> muscle_log.txt
 
-hyphy $HYPHY_DIR/codon-msa/post-msa.bf --protein-msa $PROTEIN_MSA --nucleotide-sequences $NUCL_INTERMEDIATE --output $FINAL_MSA &> post-msa_log.txt
+hyphy $HYPHY_DIR/codon-msa/post-msa.bf --protein-msa $PROTEIN_MSA \
+	                               --nucleotide-sequences $NUCL_INTERMEDIATE \
+				       --output $FINAL_MSA \
+				       --compress No \
+				       &> post-msa_log.txt
 
 cd $STARTING_DIR
 
