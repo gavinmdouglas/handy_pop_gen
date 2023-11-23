@@ -10,7 +10,7 @@ def main():
 
     parser = argparse.ArgumentParser(
 
-        description='Read in panaroo gene breakdown table and folder containing codon-aligned FASTAs of (single-copy) core genes per species. '
+        description='Read in panaroo gene breakdown table and folder containing HyPhy-prepared codon-aligned FASTAs of (single-copy) core genes per species. '
                     'Create combined multiple-sequence alignment for all single-copy, core genes.',
 
         formatter_class=argparse.RawDescriptionHelpFormatter
@@ -37,7 +37,7 @@ def main():
                         required=True)
 
     parser.add_argument('--fasta_suffix',
-                        metavar='TABLE',
+                        metavar='STRING',
                         type=str,
                         help='File suffix to add to gene id to get FASTA filenames.',
                         required=False,
